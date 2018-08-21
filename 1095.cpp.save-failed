@@ -1,0 +1,235 @@
+/**********************
+author: yomi
+date: 18.5.6
+ps:很悲伤的故事 我一直纳闷为什么JH007BD能输出？原来算的是总时间呀
+JH007BD 7:13:9
+JH007BD 0:7:0
+**********************/
+#include <iostream>
+#include<cstdio>
+#include <cstring>
+#include <algorithm>
+#include <map>
+using namespace std;
+struct car
+{
+    char no[10];
+    int h;
+    int m;
+    int s;
+    char q[10];
+    //bool flag;
+}c[10010], real[10010], longtime[10010];
+bool cmp(car a, car b)
+{
+    if(strcmp(a.no, b.no)!=0)
+        return strcmp(a.no, b.no)<0;
+    if(a.h != b.h)
+        return a.h < b.h;
+    else if(a.m != b.m)
+        return a.m < b.m;
+    else if(a.s!=b.s)
+        return a.s<b.s;
+}
+bool cmp1(car a, car b)
+{
+    if(a.h != b.h)
+        return a.h < b.h;
+    else if(a.m != b.m)
+        return a.m < b.m;
+    else if(a.s!=b.s)
+        return a.s<b.s;
+}
+
+int main()
+{
+    int n, t, lh=-1, lm=-1, ls=-1, longtim = 0;
+    map<char*, int>longtime;
+    scanf("%d%d", &n, &t);
+    for(int i=0; i<n; i++){
+        scanf("%s%d:%d:%d%s", c[i].no, &c[i].h, &c[i].m , &c[i].s, c[i].q);
+
+    }
+    sort(c, c+n, cmp);
+//    for(int i=0; i<n; i++){
+//        cout << c[i].no << ' '<< c[i].h <<":"<< c[i].m << ':'<< c[i].s<<' ' << c[i].q << endl;
+//    }
+
+    int j = 0;
+    int cnt = 0;
+    int cnt1 = 0;
+    int temp = 0;
+    while(j<n){
+        if(strcmp(c[j].q, "in") == 0)
+        break;
+        j++;
+    }
+    int cnt2 = 0;
+    while(j<n){
+        if(strcmp(c[j].no, c[j-1].no) == 0 && strcmp(c[j].q, "out") == 0&&strcmp(c[j-1].q, "in") == 0){
+//            c[j-1].flag = true;
+//            c[j].flag = true;
+            real[cnt++] = c[j-1];
+            real[cnt++] = c[j];
+            int h1,h2, m1, m2, s1, s2;
+            h1 = real[cnt-2].h;h2=real[cnt-1].h;
+            m1 = real[cnt-2].m;m2=real[cnt-1].m;
+            s1 = real[cnt-2].s;s2=real[cnt-1].s;
+            int time = 0;
+            while(h1<h2 || m1<m2 || s1<s2){
+                s1++;
+                if(s1 == 60){
+                    s1 = 0;
+                    m1++;
+                }
+                if(m1 == 60){
+                    m1 = 0;
+                    h1++;
+                }
+                time++;
+            }
+            longtime[real[cnt-1].no] += time;
+        }
+        j++;
+    }
+    cout << "1" << endl;
+    for(map<char*, int>::iterator iter; iter!=longtime.end(); ++iter){
+        int time = iter->second;
+        cout << time << endl;
+        if(time > longtim){
+            ls = time%60;
+            lh = time/3600;
+            lm = (time-ls-lh*3600)/60;
+
+        }
+        printf("%d:%d:%d\n", lh, lm, ls);
+    }
+    cout << "2" << endl;
+
+//    for(int i=0; i<n; i++){
+//        cout << c[i].no << ' '<< c[i].h <<":"<< c[i].m << ':'<< c[i].s<<' ' << c[i].q  << endl;
+//    }
+//    for(int i=0; i<cnt; i++){
+//        cout << real[i].no << ' '<< real[i].h <<":"<< real[i].m << ':'<< real[i].s<<' ' << real[i].q << ' ' << endl;
+//    }
+  /*  int cnt1 = 0;   TLE
+    int temp = 0;
+    for(int i=0; i<n; i+=2){
+        //cout << real[i].no << ' '<< real[i].h <<":"<< real[i].m << ':'<< real[i].s<<' ' << real[i].q << ' ' << endl;
+        int h1,h2, m1, m2, s1, s2;
+        h1 = real[i].h;h2=real[i+1].h;
+        m1 = real[i].m;m2=real[i+1].m;
+        s1 = real[i].s;s2=real[i+1].s;
+        int time = 0;
+        while(h1<h2 || m1<m2 || s1<s2){
+            s1++;
+            if(s1 == 60){
+                s1 = 0;
+                m1++;
+            }
+            if(m1 == 60){
+                m1 = 0;
+                h1++;
+            }
+            time++;
+        }
+        if(i+2<n && strcmp(real[i].no, real[i+2].no) == 0){
+            temp +=time;
+            continue;
+        }
+        else{
+            time += temp;
+            temp = 0;
+        }
+        strcpy(longtime[cnt1].no, real[i].no);
+        longtime[cnt1].s = time%60;
+        longtime[cnt1].h = time/3600;
+        longtime[cnt1].m = (time-longtime[cnt1].s-longtime[cnt1].h*3600)/60;
+        if(longtime[cnt1].h > lh){
+            lh = longtime[cnt1].h;
+            lm = longtime[cnt1].m;
+            ls = longtime[cnt1].s;
+        }
+        else if(longtime[cnt1].h == lh&&longtime[cnt1].m > lm){
+            lh = longtime[cnt1].h;
+            lm = longtime[cnt1].m;
+            ls = longtime[cnt1].s;
+        }
+        else if(longtime[cnt1].h == lh&& longtime[cnt1].m == lm&&longtime[cnt1].s > ls){
+            lh = longtime[cnt1].h;
+            lm = longtime[cnt1].m;
+            ls = longtime[cnt1].s;
+        }
+        cnt1++;
+
+    }*/
+//    for(int i=0; i<cnt1; i++){
+//        cout << longtime[i].no << ' ' << longtime[i].h << ":" << longtime[i].m << ":"<<longtime[i].s << endl;
+//    }
+    int th, tm, ts;
+    sort(real, real+cnt, cmp1);
+//    for(int i=0; i<cnt; i++){
+//        cout << real[i].no << ' '<< real[i].h <<":"<< real[i].m << ':'<< real[i].s<<' ' << real[i].q << ' ' << endl;
+//    }
+    j = 0;
+    int ans = 0;
+    for(int i=0; i<t; i++){
+        scanf("%d:%d:%d", &th, &tm, &ts);
+//
+        while(j<cnt){
+            if(real[j].h > th){
+                //j--;
+                break;
+            }
+            else if(real[j].h == th&&real[j].m > tm){
+                //j--;
+                break;
+            }
+            else if(real[j].h == th&& real[j].m == tm&&real[j].s > ts){
+                //j--;
+                break;
+            }
+            if(strcmp(real[j].q, "in") == 0)
+                ans++;
+            else if(strcmp(real[j].q, "out") == 0)
+                ans--;
+            j++;
+        }
+        printf("%d\n", ans);
+    }
+    for(map<char*, int>::iterator iter; iter!=longtime.end(); ++iter){
+        int time = iter->second;
+        if(time == longtim){
+            printf("%s ", iter->first);
+        }
+
+    }
+    printf("%02d:%02d:%02d", lh, lm, ls);
+    return 0;
+}
+/**
+16 7
+JH007BD 18:00:01 in
+ZD00001 11:30:08 out
+DB8888A 13:00:00 out
+ZA3Q625 23:59:50 out
+ZA133CH 10:23:00 in
+ZD00001 04:09:59 in
+JH007BD 05:09:59 in
+ZA3Q625 11:42:01 out
+JH007BD 05:10:33 in
+ZA3Q625 06:30:50 in
+JH007BD 12:23:42 out
+ZA3Q625 23:55:00 in
+JH007BD 12:24:23 out
+ZA133CH 17:11:22 out
+JH007BD 18:07:01 out
+DB8888A 06:30:50 in
+05:10:00
+06:30:50
+11:00:00
+12:23:42
+14:00:00
+18:00:00
+23:59:00
+**/
