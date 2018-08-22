@@ -31,14 +31,12 @@ void dfs(int u)///整个dfs写懵了 我选择题解
 {
     num++;
     vis[u] = true;
-    if(t[u] > t[head])
-        head = u;
-    for(int v=0; v<si; v++){
-        if(g[u][v]>0){
-            totalvalue += g[u][v];
-            g[u][v] = g[v][u] = 0;
+    for(int v=0; v<si; i++){
+        if(g[u][v] > 0){///讲道理 应该先判断访问过就不访问的呀 但是 环的情况下
+            totalvalue += g[u][v];///会少加一条边的 所以后判断
+            g[u][v] = g[v][u] = 0; ///还必须删除已经走过的边 不然又会重复计算
             if(!vis[v]){
-                dfs(v);
+                vis[v] = true;
             }
         }
     }
