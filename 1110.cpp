@@ -5,9 +5,12 @@ ps: 一般来讲二叉树不分左右是肯定不行的 我又走进岔路口了 一堆段错误
 改道~
 surface 抖屏抖得我要瞎了
 拿手机找BUG吧 明天再改
+啊啊啊 节点下标是0~19 我当成一位数了
+改好AC了
 **********************/
 #include <iostream>
 #include <vector>
+#include <cstdio>
 #include <cstring>
 using namespace std;
 struct Node
@@ -70,23 +73,23 @@ bool isOK()
 int main()
 {
     int n;
-    char l,r;
+    char l[20],r[20];
     cin >> n;
     for(int i=0; i<n; i++){
         cin >> l >> r;
-        if(l == '-'){
+        if(strcmp(l, "-") == 0){
             node[i].l = -1;
         }
         else{
-            node[i].l = l-'0';
-            vis[l-'0'] = true;
+            sscanf(l, "%d", &node[i].l);
+            vis[node[i].l] = true;
         }
-        if(r == '-'){
+        if(strcmp(r, "-") == 0){
             node[i].r = -1;
         }
         else{
-            node[i].r = r-'0';
-            vis[r-'0'] = true;
+            sscanf(r, "%d", &node[i].r);
+            vis[node[i].r] = true;
         }
     }
     int root;
@@ -107,7 +110,6 @@ int main()
     else{
         cout << "NO" << ' ' << root;
     }
-//    cout << endl;
 //    cout << maxdepth << endl;
 //    for(int i=1; i<=maxdepth; i++){
 //        for(int j=0; j<levelIndex[i].size(); j++){
