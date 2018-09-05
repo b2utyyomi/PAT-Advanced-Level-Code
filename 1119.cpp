@@ -15,33 +15,29 @@ struct node
     node* r;
 };
 int n, cnt;
+bool uniq = true;
 node* create(int L1, int R1, int L2, int R2)
 {
     if(L1>R1||L2>R2){
         return NULL;
     }
     node* root = new node;
-    if(pre[L1] == po[R2]){
-        node* lchild = new node;
-        node* rchild = new node;
-        root->data = pre[L1];
-        lchild->data = pre[L1+1];
-        rchild->data = po[R2-1];
-        root->l = lchild;
-        root->r = rchild;
-        root = create(L1+1, R1, L2, R2-1);
-    }
-    else{
-        int i, j=-1;
-        for(i=L1; i<=R1;i++){
-            if(pre[i] == po[R2]){
-                j = i;
-                break;
-            }
+    root->data = pre[L1];
+    int numL = 0;
+    int i, j=-1;
+    for(i=L2; i<=R2;i++){
+        numL++;
+        if(pre[L1+1] == po[i]){
+            j = i;
+            break;
         }
-        root->l = create(L1, j-1, L2, j-L1+L2-1);
-        root->r = create(j, R1, j-L1+L2, R2);
     }
+    if(j == R2-1)
+        uniq = false;
+
+    root->l = create(L1+1, L1+numL, L2, j);
+    root->r = create(L1+numL+1, R1, j+1, R2-1);
+
     return root;
 }
 void in_order(node* root)
@@ -65,10 +61,16 @@ int main()
     }
     node* root = create(1, n, 1, n);
     in_order(root);
+    if(uniq){
+        cout << "Yes" << endl;
+    }
+    else{
+        cout <<"No" << endl;
+    }
     for(int i=0; i<cnt-1; i++){
         cout << in[i] << ' ';
     }
-    cout << in[cnt-1];
+    cout << in[cnt-1] << endl;///没有换行一堆格式错误
     return 0;
 }
 /**
